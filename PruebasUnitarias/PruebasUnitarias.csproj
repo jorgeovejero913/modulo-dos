@@ -13,4 +13,10 @@
     <PackageReference Include="coverlet.collector" Version="1.3.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\BLL_ModuloDos\BLL_ModuloDos.csproj" />
+    <ProjectReference Include="..\DAL_ModuloDos\DAL_ModuloDos.csproj" />
+    <ProjectReference Include="..\EntidadesUPE\Entidades\Entidades.csproj" />
+  </ItemGroup>
+
 </Project>
