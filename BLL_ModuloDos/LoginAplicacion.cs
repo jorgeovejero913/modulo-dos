@@ -21,7 +21,7 @@ namespace BLL_ModuloDos
 
             try
             {
-                if (String.IsNullOrEmpty(password) || String.IsNullOrEmpty(password)) throw new Exception("Los valores no pueden estar vacios");
+                if (String.IsNullOrEmpty(password) || String.IsNullOrEmpty(legajo)) throw new Exception("Los valores no pueden estar vacios");
 
                 Sesion sesion = _autenticacionUsuario.Login(int.Parse(legajo), password);
                 if (sesion == null) throw new Exception("Legajo/Contraseña incorrectos.");

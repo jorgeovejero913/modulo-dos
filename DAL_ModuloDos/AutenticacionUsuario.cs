@@ -46,7 +46,9 @@ namespace DAL_ModuloDos
 
                         foreach (var permiso in PERMISOS_ADMINISTRADOR_HACK)
                         {
-                            permisosAuxiliar.Add(new Permiso(permiso));
+                            permisosAuxiliar.Add(new Permiso() { 
+                                Descripcion=permiso
+                            });
                         }
 
                     }
@@ -56,7 +58,10 @@ namespace DAL_ModuloDos
 
                         foreach (var permiso in PERMISOS_VENDEDOR_HACK)
                         {
-                            permisosAuxiliar.Add(new Permiso(permiso));
+                            permisosAuxiliar.Add(new Permiso()
+                            {
+                                Descripcion = permiso
+                            });
                         }
 
                     }
@@ -66,7 +71,10 @@ namespace DAL_ModuloDos
 
                         foreach (var permiso in PERMISOS_ENCARGADO_HACK)
                         {
-                            permisosAuxiliar.Add(new Permiso(permiso));
+                            permisosAuxiliar.Add(new Permiso()
+                            {
+                                Descripcion = permiso
+                            });
                         }
 
                     }
@@ -76,7 +84,10 @@ namespace DAL_ModuloDos
 
                         foreach (var permiso in PERMISOS_GERENTE_HACK)
                         {
-                            permisosAuxiliar.Add(new Permiso(permiso));
+                            permisosAuxiliar.Add(new Permiso()
+                            {
+                                Descripcion = permiso
+                            });
                         }
 
                     }

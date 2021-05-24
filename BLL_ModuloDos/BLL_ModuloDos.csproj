@@ -6,7 +6,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DAL_ModuloDos\DAL_ModuloDos.csproj" />
-    <ProjectReference Include="..\EntidadesUPE\Entidades\Entidades.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Entidades">
+      <HintPath>..\..\..\UPE2021_TecProg\Clase 07\EntidadesUPE\Entidades\bin\Debug\netcoreapp3.1\Entidades.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
