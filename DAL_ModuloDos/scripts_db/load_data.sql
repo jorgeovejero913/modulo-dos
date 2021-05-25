@@ -1,5 +1,20 @@
 /* Carga de datos iniciales*/
 
+/*Datos Tabla Direccion*/
+USE [dbTecProg]
+GO
+
+INSERT INTO [dbo].[direccion]
+           ([calle]
+           ,[altura]
+           ,[localidad]
+		   ,[codigo_postal]
+		   .[provincia])
+     VALUES
+		   ('Las Rosas','123','Monte Grande', '1842', 'Buenos Aires')
+
+GO
+
 
 /*Datos Tabla Personas*/
 USE [dbTecProg]
@@ -8,18 +23,38 @@ GO
 INSERT INTO [dbo].[persona]
            ([apellido]
            ,[nombre]
-           ,[dni])
+           ,[dni]
+		   ,[direccion_id])
      VALUES
-		   ('Morrone','Florencia','22333444'),
-		   ('Solohaga','Braian','22333111'),
-		   ('Ovejero','Jorge','33444666'),
-           ('Ramirez','Martin','33444555'),
-           ('Santos','Mario','33666999'),
-           ('Medina','Gabriel','11333999'),
-           ('Lampone','Pablo','11222999'),
-           ('Ravenna','Emilio','11555999')
+		   ('Morrone','Florencia','22333444', 1),
+		   ('Solohaga','Braian','22333111', 1),
+		   ('Ovejero','Jorge','33444666', 1),
+           ('Ramirez','Martin','33444555', 1),
+           ('Santos','Mario','33666999', 1),
+           ('Medina','Gabriel','11333999', 1),
+           ('Lampone','Pablo','11222999', 1),
+           ('Ravenna','Emilio','11555999', 1)
 
 GO
+
+/*Datos Tabla Permiso*/
+USE [dbTecProg]
+GO
+
+INSERT INTO [dbo].[permiso]
+           ([descripcion])
+     VALUES
+		   ('ADMINISTRAR_USUARIOS'),
+		   ('CONTROLAR_STOCK'),
+		   ('CONFIGURAR_ALERTAS'),
+		   ('GENERAR_ORDEN_DE_COMPRA'),
+		   ('VENDER_PRODUCTOS'),
+		   ('GESTIONAR_CLIENTES'),
+		   ('APROBAR_ORDEN_DE_COMPRA'),
+		   ('VER_REPORTES_DE_VENTA')
+GO
+
+
 
 /*Datos Tabla Rol*/
 USE [dbTecProg]
@@ -28,11 +63,24 @@ GO
 INSERT INTO [dbo].[rol]
            ([descripcion])
      VALUES
-           ('superadmin'),
 		   ('Administrador'),
-		   ('Encargado'),
+		   ('Encargado de inventario y logística'),
 		   ('Vendedor'),
 		   ('Gerente')
+GO
+
+
+/*Datos Tabla Permiso_Por_Rol*/
+USE [dbTecProg]
+GO
+INSERT INTO [dbo].[permiso_por_rol]([rol_id],[permiso_id]) VALUES(1,1)
+INSERT INTO [dbo].[permiso_por_rol]([rol_id],[permiso_id]) VALUES(2,2)
+INSERT INTO [dbo].[permiso_por_rol]([rol_id],[permiso_id]) VALUES(2,3)
+INSERT INTO [dbo].[permiso_por_rol]([rol_id],[permiso_id]) VALUES(2,4)
+INSERT INTO [dbo].[permiso_por_rol]([rol_id],[permiso_id]) VALUES(3,5)
+INSERT INTO [dbo].[permiso_por_rol]([rol_id],[permiso_id]) VALUES(3,6)
+INSERT INTO [dbo].[permiso_por_rol]([rol_id],[permiso_id]) VALUES(4,7)
+INSERT INTO [dbo].[permiso_por_rol]([rol_id],[permiso_id]) VALUES(4,8)
 GO
 
 
@@ -43,17 +91,19 @@ GO
 INSERT INTO [dbo].[usuario]
            ([persona_id]
            ,[rol_id]
-           ,[username]
            ,[password]
            ,[legajo])
      VALUES
-			((select persona.id from persona where persona.apellido like 'morrone'),1,'morrone', '123456', '0001'),
-			((select persona.id from persona where persona.apellido like 'solohaga'),1,'solohaga', '123456', '0002'),
-			((select persona.id from persona where persona.apellido like 'ovejero'),1,'ovejero', '123456', '0003'),
-			((select persona.id from persona where persona.apellido like 'ramirez'),1,'ramirez', '123456', '0004'),
-			((select persona.id from persona where persona.apellido like 'santos'),2,'santos', '123456', '0005'),
-			((select persona.id from persona where persona.apellido like 'medina'),3,'medina', '123456', '0006'),
-			((select persona.id from persona where persona.apellido like 'lampone'),4,'lampone', '123456', '0007'),
-			((select persona.id from persona where persona.apellido like 'ravenna'),5,'ravenna', '123456', '0008')
+			((select persona.id from persona where persona.apellido like 'morrone'),1, '123456', '0001'),
+			((select persona.id from persona where persona.apellido like 'solohaga'),1, '123456', '0002'),
+			((select persona.id from persona where persona.apellido like 'ovejero'),1, '123456', '0003'),
+			((select persona.id from persona where persona.apellido like 'ramirez'),1, '123456', '0004'),
+			((select persona.id from persona where persona.apellido like 'santos'),2, '123456', '0005'),
+			((select persona.id from persona where persona.apellido like 'medina'),3, '123456', '0006'),
+			((select persona.id from persona where persona.apellido like 'lampone'),4, '123456', '0007'),
+			((select persona.id from persona where persona.apellido like 'ravenna'),4, '123456', '0008')
 
 GO
+
+
+
