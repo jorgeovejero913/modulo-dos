@@ -1,117 +1,111 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Data;
+using System.Linq;
+using System.Threading.Tasks;
 using Entidades;
 
 namespace DAL_ModuloDos
 {
     public class AutenticacionUsuario
     {
-        const int LEGAJO_ADMINISTRADOR_HACK = 1234;
-        const string PASSWORD_ADMINISTRADOR_HACK = "ADMINISTRADOR";
-        const int LEGAJO_VENDEDOR_HACK = 1234;
-        const string PASSWORD_VENDEDOR_HACK = "VENDEDOR";
-        const int LEGAJO_GERENTE_HACK = 1234;
-        const string PASSWORD_GERENTE_HACK = "GERENTE";
-        const int LEGAJO_ENCARGADO_HACK = 1234;
-        const string PASSWORD_ENCARGADO_HACK = "ENCARGADO";
-
-        string[] PERMISOS_ADMINISTRADOR_HACK = { "ADMINISTRAR_USUARIOS" };
-        string[] PERMISOS_VENDEDOR_HACK = { "ADMINISTRAR_CLIENTES", "VENDER", "SELECCIONAR_METODO_PAGO"};
-        string[] PERMISOS_GERENTE_HACK = { "APRUEBA_ORDENES_COMPRA", "VER_REPORTES"};
-        string[] PERMISOS_ENCARGADO_HACK = { "CONTROLAR_STOCK", "CONFIGURAR_ALERTAS", "GENERAR_ORDENES_COMPRA", "INGRESAR_MERCADERIA" };
+        Conexion _db = new Conexion();
 
         public Sesion Login(int legajo, string password)
         {
             try
             {
                 // HACK: Harcodeamos un usuario. Esto debe hacerse contra la base de datos
-                if ((legajo == LEGAJO_ADMINISTRADOR_HACK 
-                    || legajo == LEGAJO_VENDEDOR_HACK 
-                    || legajo == LEGAJO_GERENTE_HACK 
-                    || legajo == LEGAJO_ENCARGADO_HACK) 
-                    && (password.Equals(PASSWORD_ADMINISTRADOR_HACK)
-                    || password.Equals(PASSWORD_VENDEDOR_HACK)
-                    || password.Equals(PASSWORD_GERENTE_HACK)
-                    || password.Equals(PASSWORD_ENCARGADO_HACK))
-                   )
+                string query = string.Format("Select id, persona_id, rol_id, legajo  from usuario where legajo={0} and password='{1}'", legajo, password);
+
+                DataTable usuarioDB = _db.LeerPorComando(query);
+
+                /*
+                 * usuario[0]=id
+                 * usuario[1]=persona_id
+                 * usuario[2]=rol_id
+                 * usuario[3]=legajo
+                 * **/
+
+                if (usuarioDB.Rows.Count > 0)
                 {
+                    string queryRol = string.Format("Select id, descripcion from rol where id={0}", usuarioDB.Rows[0].ItemArray[2]);
+                    DataTable rolDB = _db.LeerPorComando(queryRol);
 
-                    Rol rolAuxiliar = new Rol();
+
+                    Rol rolAuxiliar = new Rol() {
+                        ID = int.Parse(rolDB.Rows[0].ItemArray[0].ToString()),
+                        Descripcion = rolDB.Rows[0].ItemArray[1].ToString()
+                    };
+
+                    string queryPermisos = string.Format("Select permiso.id, permiso.descripcion from permiso, rol, permiso_por_rol " +
+                        "where rol.id=permiso_por_rol.rol_id and permiso.id=permiso_por_rol.permiso_id and rol.id={0}", rolDB.Rows[0].ItemArray[0]);
+                    DataTable permisosDB = _db.LeerPorComando(queryPermisos);
+
                     List<Permiso> permisosAuxiliar = new List<Permiso>();
-
-                    if (password.Equals(PASSWORD_ADMINISTRADOR_HACK))
+                    foreach (DataRow item in permisosDB.Rows)
                     {
-                        rolAuxiliar.Descripcion="Administrador";
-
-                        foreach (var permiso in PERMISOS_ADMINISTRADOR_HACK)
+                        Permiso permisoDB = new Permiso()
                         {
-                            permisosAuxiliar.Add(new Permiso() { 
-                                Descripcion=permiso
-                            });
-                        }
-
-                    }
-                    if (password.Equals(PASSWORD_VENDEDOR_HACK))
-                    {
-                        rolAuxiliar.Descripcion = "Vendedor";
-
-                        foreach (var permiso in PERMISOS_VENDEDOR_HACK)
-                        {
-                            permisosAuxiliar.Add(new Permiso()
-                            {
-                                Descripcion = permiso
-                            });
-                        }
-
-                    }
-                    if (password.Equals(PASSWORD_ENCARGADO_HACK))
-                    {
-                        rolAuxiliar.Descripcion = "Encargado de inventario y logística";
-
-                        foreach (var permiso in PERMISOS_ENCARGADO_HACK)
-                        {
-                            permisosAuxiliar.Add(new Permiso()
-                            {
-                                Descripcion = permiso
-                            });
-                        }
-
-                    }
-                    if (password.Equals(PASSWORD_GERENTE_HACK))
-                    {
-                        rolAuxiliar.Descripcion = "Gerente";
-
-                        foreach (var permiso in PERMISOS_GERENTE_HACK)
-                        {
-                            permisosAuxiliar.Add(new Permiso()
-                            {
-                                Descripcion = permiso
-                            });
-                        }
-
+                            ID = int.Parse(item.ItemArray[0].ToString()),
+                            Descripcion = item.ItemArray[1].ToString()
+                        };
+                        permisosAuxiliar.Add(permisoDB);
                     }
 
                     rolAuxiliar.Permisos = permisosAuxiliar;
 
-                    Direccion direccionAuxiliar = new Direccion();
-                    direccionAuxiliar.Calle = "Calle";
-                    direccionAuxiliar.Altura = "123";
-                    direccionAuxiliar.CodigoPostal = "1842";
 
-                    Usuario usuarioPrueba = new Usuario();
-                    usuarioPrueba.Rol = rolAuxiliar;
-                    usuarioPrueba.Legajo = legajo;
-                    usuarioPrueba.Nombre = "Usuario";
-                    usuarioPrueba.Apellido = "Prueba";
-                    usuarioPrueba.Direccion = direccionAuxiliar;
-                    usuarioPrueba.DNI = 11222333;
+                    //Persona
+                    string queryPersona = string.Format("Select id, nombre, apellido, dni, direccion_id from persona where id={0}", usuarioDB.Rows[0].ItemArray[1]);
+                    DataTable personaDB = _db.LeerPorComando(queryPersona);
 
-                    Sesion prueba = new Sesion();
-                    prueba.Usuario = usuarioPrueba;
-                    prueba.Inicio = DateTime.Now;
+                    Usuario usuario = new Usuario()
+                    {
+                        ID = int.Parse(usuarioDB.Rows[0].ItemArray[0].ToString()),
+                        Nombre = personaDB.Rows[0].ItemArray[1].ToString(),
+                        Apellido = personaDB.Rows[0].ItemArray[2].ToString(),
+                        DNI = int.Parse(personaDB.Rows[0].ItemArray[3].ToString()),
+                        Legajo= int.Parse(usuarioDB.Rows[0].ItemArray[3].ToString()),
+                        Rol = rolAuxiliar
+                    };
 
-                    return prueba;
+
+                    //DIRECCION
+                    string queryDireccion = string.Format("Select id, calle, altura, localidad, codigo_postal, provincia from direccion where id={0}", personaDB.Rows[0].ItemArray[4]);
+                    DataTable direccionDB = _db.LeerPorComando(queryDireccion);
+
+                    Direccion direccionAuxiliar = new Direccion(){
+                        Calle = direccionDB.Rows[0].ItemArray[1].ToString(),
+                        Altura = direccionDB.Rows[0].ItemArray[2].ToString(),
+                        Localidad = direccionDB.Rows[0].ItemArray[3].ToString(),
+                        CodigoPostal = direccionDB.Rows[0].ItemArray[4].ToString(),
+                        Provincia = direccionDB.Rows[0].ItemArray[5].ToString(),
+                    };
+
+                    usuario.Direccion = direccionAuxiliar;
+
+                    Sesion sesion = new Sesion();
+                    sesion.Usuario = usuario;
+                    sesion.Inicio = DateTime.Now;
+                    string sqlFormattedDate = sesion.Inicio.ToString("yyyy-MM-dd HH:mm:ss.fff");
+
+                    string insertSesion = string.Format("Insert into sesion(usuario_id, fecha_inicio) values({0}, '{1}')", sesion.Usuario.ID, sqlFormattedDate);
+
+                    if(1 != _db.EscribirPorComando(insertSesion))
+                    {
+                        throw new Exception("Error al iniciar la sesión");
+                    }
+                    else
+                    {
+                        string querySesion = string.Format("Select top 1 id from sesion where usuario_id={0} order by id desc", sesion.Usuario.ID);
+                        DataTable sesionDB = _db.LeerPorComando(querySesion);
+
+                        sesion.ID = int.Parse(sesionDB.Rows[0].ItemArray[0].ToString());
+
+                        return sesion;
+                    }
                 }
                 else
                 {
@@ -129,13 +123,20 @@ namespace DAL_ModuloDos
 
         public void Logout()
         {
-
+            //Falta probarlo
             try
             {
                 ManejadorDeSesion.Sesion.Fin = DateTime.Now;
-                //TODO: Aca se setearia en la base de datos la fecha de fin de la sesion
 
-                
+                string sqlFormattedDate = ManejadorDeSesion.Sesion.Fin.ToString("yyyy-MM-dd HH:mm:ss.fff");
+
+                string updateSesion = string.Format("UPDATE sesion SET fecha_fin='{0}' where id={1}", sqlFormattedDate, ManejadorDeSesion.Sesion.ID);
+               
+                if (1 != _db.EscribirPorComando(updateSesion))
+                {
+                    throw new Exception("Error al cerrar la sesión");
+                }
+
             }
             catch (Exception e)
             {
@@ -143,6 +144,12 @@ namespace DAL_ModuloDos
                 throw e;
             }
            
+        }
+
+        public Sesion obtenerSesion()
+        {
+            //Falta Desarrollar
+            return new Sesion();
         }
 
     }
