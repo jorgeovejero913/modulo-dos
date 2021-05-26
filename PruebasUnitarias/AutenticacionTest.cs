@@ -8,13 +8,17 @@ namespace PruebasUnitarias
     public class AutenticacionTest
     {
         [TestMethod]
-        public void LoginTest()
+        public void LoginLogoutTest()
         {
             
-            LoginAplicacion loginAplicacion = new LoginAplicacion();
+            BAutenticacion loginAplicacion = new BAutenticacion();
             loginAplicacion.Login("1", "123456");
 
             Assert.AreNotEqual(ManejadorDeSesion.Sesion, null);
+
+            loginAplicacion.Logout();
+
+            Assert.AreEqual(ManejadorDeSesion.Sesion, null);
 
         }
 
