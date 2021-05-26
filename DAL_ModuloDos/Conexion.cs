@@ -24,7 +24,7 @@ namespace DAL_ModuloDos
          */
         private void Conectar()
         {   // HACK: Cadena de conexión hardcodeada. Luego ponerla como parametro de configuración del proyecto u otra alternativa.
-            strCadenaDeConexion = @"Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=dbTecProg;Data Source=.\SQLEXPRESS";
+            strCadenaDeConexion = @"Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=dbTecProg;Data Source=DESKTOP-FUKT8LL\SQLSERVER";
 
             //Instanció un objeto del tipo SqlConnection
             objConexion = new SqlConnection();
