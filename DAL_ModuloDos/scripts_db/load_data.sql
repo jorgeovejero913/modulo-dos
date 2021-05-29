@@ -8,12 +8,22 @@ INSERT INTO [dbo].[direccion]
            ([calle]
            ,[altura]
            ,[localidad]
-		   ,[codigo_postal]
-		   .[provincia])
+           ,[codigo_postal]
+           ,[provincia])
      VALUES
-		   ('Las Rosas','123','Monte Grande', '1842', 'Buenos Aires')
+           ('Las Rosas', '3245','Monte Grande','1842','Buenos Aires'),
+		   ('Malvinas', '464','Luis Guillon','1200','Buenos Aires'),
+		   ('Las Heras', '4556','Lomas de Zamora','1800','Buenos Aires'),
+		   ('Fair', '123','Ezeiza','1111','Buenos Aires'),
+		   ('Oliver', '3454','Monte Grande','1842','Buenos Aires'),
+		   ('9 de Julio', '355','Monte Grande','1842','Buenos Aires'),
+		   ('Las Rosas', '34','Monte Grande','1842','Buenos Aires'),
+		   ('25 de Mayo', '34','Ezeiza','1333','Buenos Aires')
 
 GO
+
+
+
 
 
 /*Datos Tabla Personas*/
@@ -27,13 +37,13 @@ INSERT INTO [dbo].[persona]
 		   ,[direccion_id])
      VALUES
 		   ('Morrone','Florencia','22333444', 1),
-		   ('Solohaga','Braian','22333111', 1),
-		   ('Ovejero','Jorge','33444666', 1),
-           ('Ramirez','Martin','33444555', 1),
-           ('Santos','Mario','33666999', 1),
-           ('Medina','Gabriel','11333999', 1),
-           ('Lampone','Pablo','11222999', 1),
-           ('Ravenna','Emilio','11555999', 1)
+		   ('Solohaga','Braian','22333111', 2),
+		   ('Ovejero','Jorge','33444666', 3),
+           ('Ramirez','Martin','33444555', 4),
+           ('Santos','Mario','33666999', 5),
+           ('Medina','Gabriel','11333999', 6),
+           ('Lampone','Pablo','11222999', 7),
+           ('Ravenna','Emilio','11555999', 8)
 
 GO
 
@@ -64,7 +74,7 @@ INSERT INTO [dbo].[rol]
            ([descripcion])
      VALUES
 		   ('Administrador'),
-		   ('Encargado de inventario y logística'),
+		   ('Encargado de inventario y logistica'),
 		   ('Vendedor'),
 		   ('Gerente')
 GO
