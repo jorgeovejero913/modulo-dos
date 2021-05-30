@@ -19,13 +19,12 @@
     <PackageReference Include="coverlet.collector" Version="1.3.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\repoTecnicas\UPE2021_TecProg-main\Clase 07\EntidadesUPE\Entidades\Entidades.csproj" />
     <ProjectReference Include="..\BLL_ModuloDos\BLL_ModuloDos.csproj" />
     <ProjectReference Include="..\DAL_ModuloDos\DAL_ModuloDos.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Entidades">
-      <HintPath>..\..\..\UPE2021_TecProg\Clase 07\EntidadesUPE\Entidades\bin\Debug\netcoreapp3.1\Entidades.dll</HintPath>
+      <HintPath>..\Entidades.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup />

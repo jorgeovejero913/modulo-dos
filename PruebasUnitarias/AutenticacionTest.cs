@@ -12,7 +12,7 @@ namespace PruebasUnitarias
         {
             
             BAutenticacion loginAplicacion = new BAutenticacion();
-            loginAplicacion.Login("4", "1234");
+            loginAplicacion.Login("4", "123456");
 
             Assert.AreNotEqual(ManejadorDeSesion.Sesion, null);
 

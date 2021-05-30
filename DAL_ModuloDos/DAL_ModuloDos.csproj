@@ -8,16 +8,12 @@
 
   <ItemGroup>
     <Reference Include="Entidades">
-      <HintPath>..\repoTecnicas\Clase 07\EntidadesUPE\Entidades\bin\Debug\netcoreapp3.1\Entidades.dll</HintPath>
+      <HintPath>..\Entidades.dll</HintPath>
     </Reference>
   </ItemGroup>
 
 <ItemGroup>
 	<PackageReference Include="System.Data.SqlClient" Version="4.6.1" />
-</ItemGroup>
-
-<ItemGroup>
-  <ProjectReference Include="..\..\repoTecnicas\UPE2021_TecProg-main\Clase 07\EntidadesUPE\Entidades\Entidades.csproj" />
 </ItemGroup>
 
 </Project>
