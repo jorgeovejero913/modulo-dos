@@ -22,7 +22,7 @@ namespace DAL_ModuloDos
                 string query = string.Format("Select id, persona_id, rol_id, legajo, deshabilitado from usuario where legajo={0} and password='{1}'", legajo, password);
                 DataTable usuarioDB = _db.LeerPorComando(query);
 
-                if (usuarioDB.Rows.Count > 0 || !DBNull.Value.Equals(usuarioDB.Rows[0].ItemArray[4]))
+                if (usuarioDB.Rows.Count > 0 && !DBNull.Value.Equals(usuarioDB.Rows[0].ItemArray[4]))
                 {
                     
                     Sesion sesion = new Sesion();
