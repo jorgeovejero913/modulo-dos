@@ -18,7 +18,7 @@ namespace DAL_ModuloDos
         /// usuarioColumnas[3]=legajo
         /// </summary>
         /// <param name="usuarioColumnas">Columnas de la consulta a la tabla usuario</param>
-        /// <returns>Un objeto del tipo Sesion</returns>
+        /// <returns>Un objeto del tipo 'Usuario'</returns>
         public Usuario obtenerUsuarioObj(object[] usuarioColumnas)
         {
             //Rol
@@ -115,115 +115,51 @@ namespace DAL_ModuloDos
 
             return usuario;
         }
-        
-        /*
-         * funcion para obtener una lista con datos de todos los usuarios
-         * parametros: null
-         * retorna: datatable con datos de usuarios (id_usuario, legajo, nombre, apellido)
-         * **/
+
+        /// <summary>
+        /// Devuelve una lista con datos de todos los usuarios
+        /// </summary>
+        /// <returns>Objeto del tipo 'List Usuario'</returns>
         public List<Usuario> obtenerListaUsuarios()
         {
             DataTable listaUsuariosDB = new DataTable();
             List<Usuario> usuarios = new List<Usuario>();
-            try
+
+            string queryLista = string.Format("SELECT id, persona_id, rol_id, legajo, deshabilitado FROM usuario");
+            listaUsuariosDB = _db.LeerPorComando(queryLista);
+
+            foreach (DataRow item in listaUsuariosDB.Rows)
             {
-                string queryLista = string.Format("SELECT id, persona_id, rol_id, legajo, deshabilitado FROM usuario");
-                listaUsuariosDB = _db.LeerPorComando(queryLista);
-
-                foreach (DataRow item in listaUsuariosDB.Rows)
-                {
-                    usuarios.Add(obtenerUsuarioObj(item.ItemArray));
-                }
-
-                return usuarios;
+                usuarios.Add(obtenerUsuarioObj(item.ItemArray));
             }
-            catch(Exception e)
-            {
-                throw e;
-            }            
+
+            return usuarios;          
         }
 
-        public List<Rol> obtenerListaRoles()
-        {
-            DataTable listaRolesDB = new DataTable();
-            List<Rol> roles = new List<Rol>();
-            try
-            {
-                string queryLista = string.Format("SELECT id, descripcion FROM rol ORDER BY descripcion ASC");
-                listaRolesDB = _db.LeerPorComando(queryLista);
-
-                foreach (DataRow item in listaRolesDB.Rows)
-                {
-                    roles.Add(new Rol() {
-                        ID=int.Parse(item.ItemArray[0].ToString()),
-                        Descripcion= item.ItemArray[0].ToString()
-                    });
-                }
-
-                return roles;
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-        }
-
-
-        /*
-         * funcion para obtener el ultimo id de una tabla
-         * parametro: string nombre de la tabla
-         * retorna: int id
-         * **/
+        /// <summary>
+        /// Funcion para obtener el ultimo id de una tabla
+        /// </summary>
+        /// <param name="tabla">string</param>
+        /// <returns>Ultimo ID(int)</returns>
         public int obtenerUltimoId(string tabla)
         {
-            try
-            {
-                string queryUltimoId = string.Format("SELECT TOP 1 id FROM {0} ORDER BY id DESC", tabla);
-                DataTable ultimoId = _db.LeerPorComando(queryUltimoId);
+            string queryUltimoId = string.Format("SELECT TOP 1 id FROM {0} ORDER BY id DESC", tabla);
+            DataTable ultimoId = _db.LeerPorComando(queryUltimoId);
 
-                if (int.Parse(ultimoId.Rows[0].ItemArray[0].ToString()) > 0)
-                    return int.Parse(ultimoId.Rows[0].ItemArray[0].ToString());
-                else
-                    throw new Exception("Error al ultimo ID");
-            }
-            catch(Exception e)
-            {
-                throw e;
-            }
-            
-
-        }
-        /*
-         * funcion para obtener el id de un rol segun su descripcion
-         * parametro: string nombre del ron
-         * retorna: int id del rol
-         * **/
-        public int obtenerRolId(string nombreRol)
-        {
-            try
-            {
-                string queryRolId = string.Format("SELECT id FROM rol WHERE descripcion = {0}", nombreRol);
-                DataTable idRol = _db.LeerPorComando(queryRolId);
-
-                if (int.Parse(idRol.Rows[0].ItemArray[0].ToString()) > 0)                
-                    return int.Parse(idRol.Rows[0].ItemArray[0].ToString());                
-                else
-                    throw new Exception("Rol no encontrado");                
-            }
-            catch(Exception e)
-            {
-                throw e;
-            }           
+            if (int.Parse(ultimoId.Rows[0].ItemArray[0].ToString()) > 0)
+                return int.Parse(ultimoId.Rows[0].ItemArray[0].ToString());
+            else
+                throw new Exception(string.Format("Error al obtener el ultimo ID de la tabla {0}", tabla));
         }
 
-        /*
-         * funcion para dar de alta a un usuario
-         * parametros: object[] con datos del usuario
-         * retorna: Usuario
-         * **/
+        /// <summary>
+        /// Funcion para dar de alta a un usuario
+        /// </summary>
+        /// <param name="usuario">Usuario</param>
+        /// <param name="password">string</param>
+        /// <returns>Objeto del tipo 'Usuario'</returns>
         public Usuario altaUsuario(Usuario usuario, string password)
         {
-
             //INSERT DIRECCION
             string queryDireccion = string.Format("INSERT INTO direccion (calle, altura, localidad, codigo_postal, provincia) VALUES ('{0}','{1}','{2}','{3}','{4}')", 
                 usuario.Direccion.Calle,
@@ -269,11 +205,16 @@ namespace DAL_ModuloDos
                         return usuario;
                     }
                 }
-
             }
-
         }
 
+        /// <summary>
+        /// Funcion para modificar a un usuario en la base de datos.
+        /// Si la contraseña no se pasa, no se modifica la misma en la base.
+        /// </summary>
+        /// <param name="usuario">Usuario</param>
+        /// <param name="password">string</param>
+        /// <returns>Objeto del tipo 'Usuario'</returns>
         public Usuario modificarUsuario(Usuario usuario, string password="")
         {
 
@@ -340,54 +281,38 @@ namespace DAL_ModuloDos
 
         }
 
-        /*
-         * funcion para desactivar usuario
-         * parametro: Usuario
-         * retorna: bool
-         * **/
+        /// <summary>
+        /// Desactiva al usuario asignandole la fecha del dia en la base de datos
+        /// </summary>
+        /// <param name="usuario">Usuario</param>
+        /// <returns>Objeto del tipo 'Usuario'</returns>
         public Usuario desactivarUsuario(Usuario usuario)
         {
-            try
-            {
-                DateTime deshabilitado = DateTime.Now;
-                usuario.Deshabilitado = deshabilitado;
-                string sqlFormattedDate = deshabilitado.ToString("yyyy-MM-dd HH:mm:ss.fff");
-                string queryUsuario = string.Format("UPDATE usuario SET deshabilitado = '{0}' where id={1}", sqlFormattedDate, usuario.ID);
+            DateTime deshabilitado = DateTime.Now;
+            usuario.Deshabilitado = deshabilitado;
+            string sqlFormattedDate = deshabilitado.ToString("yyyy-MM-dd HH:mm:ss.fff");
+            string queryUsuario = string.Format("UPDATE usuario SET deshabilitado = '{0}' where id={1}", sqlFormattedDate, usuario.ID);
 
-                if (1 != _db.EscribirPorComando(queryUsuario))
-                    return null;
-                else
-                    return usuario;
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-
+            if (1 != _db.EscribirPorComando(queryUsuario))
+                return null;
+            else
+                return usuario;
         }
 
-        /*
-         * funcion para desactivar usuario
-         * parametro: Usuario
-         * retorna: bool
-         * **/
+        /// <summary>
+        /// Activa al usuario asignandole NULL len el campo 'deshabilitado' de la base de datos
+        /// </summary>
+        /// <param name="usuario">Usuario</param>
+        /// <returns>Objeto del tipo 'Usuario'</returns>
         public Usuario activarUsuario(Usuario usuario)
         {
-            try
-            {
-                usuario.Deshabilitado = null;
-                string queryUsuario = string.Format("UPDATE usuario SET deshabilitado = NULL where id={0}", usuario.ID);
+            usuario.Deshabilitado = null;
+            string queryUsuario = string.Format("UPDATE usuario SET deshabilitado = NULL where id={0}", usuario.ID);
 
-                if (1 != _db.EscribirPorComando(queryUsuario))
-                    return null;
-                else
-                    return usuario;
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-
+            if (1 != _db.EscribirPorComando(queryUsuario))
+                return null;
+            else
+                return usuario;
         }
     }
 }

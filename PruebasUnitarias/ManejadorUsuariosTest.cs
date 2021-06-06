@@ -19,7 +19,7 @@ namespace PruebasUnitarias
 
             Direccion direccion = new Direccion()
             {
-                Calle= "San Martin",
+                Calle= "Las rosas",
                 Altura= "123",
                 CodigoPostal="1842",
                 Localidad="Monte Grande",
@@ -28,11 +28,11 @@ namespace PruebasUnitarias
 
             Usuario usuario = new Usuario()
             {
-                Nombre="Flor",
+                Nombre="Florencia Noemi",
                 Apellido="Morrone 30/05",
-                Legajo=1245,
+                Legajo=12451,
                 Rol=roles[0],
-                DNI=45345234,
+                DNI=4223334,
                 Direccion=direccion
             };
 

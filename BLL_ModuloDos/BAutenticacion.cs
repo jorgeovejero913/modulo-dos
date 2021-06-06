@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using BLL_ModuloDos.Excepciones;
 using DAL_ModuloDos;
 using Entidades;
 
@@ -25,20 +26,13 @@ namespace BLL_ModuloDos
         public void Login(string legajo, string password)
         {
 
-            try
-            {
-                if (String.IsNullOrEmpty(password) || String.IsNullOrEmpty(legajo)) throw new Exception("Los valores no pueden estar vacios");
+            if (String.IsNullOrEmpty(password) || String.IsNullOrEmpty(legajo)) throw new Exception("Los valores no pueden estar vacios");
 
-                Sesion sesion = _autenticacionUsuario.Login(int.Parse(legajo), password);
-                if (sesion == null) throw new Exception("Legajo/Contraseña incorrectos.");
-
-                ManejadorDeSesion.Login(sesion);
-            }
-            catch (Exception e)
-            {
-
-                throw e;
-            }
+            Sesion sesion = _autenticacionUsuario.Login(int.Parse(legajo), password);
+            if (sesion == null) throw new ExcepcionLogin();
+                
+            ManejadorDeSesion.Login(sesion);
+            
         }
 
         
@@ -47,23 +41,14 @@ namespace BLL_ModuloDos
         /// </summary>
         public void Logout()
         {
-            try
-            {
-                if (ManejadorDeSesion.Sesion == null)
-                    throw new Exception("No existe una sesion iniciada para cerrarla.");
+            if (ManejadorDeSesion.Sesion == null)
+                throw new ExcepcionSesion("No existe una sesion iniciada para cerrarla.");
 
-                ManejadorDeSesion.Sesion.Fin = DateTime.Now;
+            ManejadorDeSesion.Sesion.Fin = DateTime.Now;
 
-                _autenticacionUsuario.Logout();
+            _autenticacionUsuario.Logout();
 
-                ManejadorDeSesion.Logout();
-            }
-            catch (Exception e)
-            {
-
-                throw e;
-            }
-            
+            ManejadorDeSesion.Logout();
         }
 
         // <summary>
@@ -73,20 +58,12 @@ namespace BLL_ModuloDos
         /// </summary>
         public void VerificarSesion()
         {
-            try
+            if (ManejadorDeSesion.Sesion == null)
+                throw new ExcepcionSesion("No existe una sesion iniciada.");
+            if (!_autenticacionUsuario.SesionValida())
             {
-                if (ManejadorDeSesion.Sesion == null)
-                    throw new Exception("No existe una sesion iniciada.");
-                if (!_autenticacionUsuario.SesionValida())
-                {
-                    ManejadorDeSesion.Logout();
-                    throw new Exception("Su sesion no es válida, por lo tanto se ha cerrado.");
-                }
-            }
-            catch (Exception)
-            {
-
-                throw;
+                ManejadorDeSesion.Logout();
+                throw new ExcepcionSesion("Su sesion no es válida, por lo tanto se ha cerrado.");
             }
         }
     }

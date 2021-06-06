@@ -10,30 +10,29 @@ namespace DAL_ModuloDos
     {
         Conexion _db = new Conexion();
 
+
+        /// <summary>
+        /// Consulta y devuelve los roles cargados en la base de datos
+        /// </summary>
+        /// <returns>Objeto del tipo 'List Rol'</returns>
         public List<Rol> obtenerListaRoles()
         {
-            DataTable listaRolesDB = new DataTable();
+            DataTable listaRolesDB;
             List<Rol> roles = new List<Rol>();
-            try
-            {
-                string queryLista = string.Format("SELECT id, descripcion FROM rol ORDER BY descripcion ASC");
-                listaRolesDB = _db.LeerPorComando(queryLista);
 
-                foreach (DataRow item in listaRolesDB.Rows)
+            string queryLista = string.Format("SELECT id, descripcion FROM rol ORDER BY descripcion ASC");
+            listaRolesDB = _db.LeerPorComando(queryLista);
+
+            foreach (DataRow item in listaRolesDB.Rows)
+            {
+                roles.Add(new Rol()
                 {
-                    roles.Add(new Rol()
-                    {
-                        ID = int.Parse(item.ItemArray[0].ToString()),
-                        Descripcion = item.ItemArray[0].ToString()
-                    });
-                }
+                    ID = int.Parse(item.ItemArray[0].ToString()),
+                    Descripcion = item.ItemArray[0].ToString()
+                });
+            }
 
-                return roles;
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
+            return roles;
         }
     }
 }
