@@ -34,7 +34,7 @@ INSERT INTO [dbo].[persona]
            ([apellido]
            ,[nombre]
            ,[dni]
-		   ,[direccion_id])
+		   ,[id_direccion])
      VALUES
 		   ('Morrone','Florencia','22333444', 1),
 		   ('Solohaga','Braian','22333111', 2),
@@ -83,14 +83,14 @@ GO
 /*Datos Tabla Permiso_Por_Rol*/
 USE [dbTecProg]
 GO
-INSERT INTO [dbo].[permiso_por_rol]([rol_id],[permiso_id]) VALUES(1,1)
-INSERT INTO [dbo].[permiso_por_rol]([rol_id],[permiso_id]) VALUES(2,2)
-INSERT INTO [dbo].[permiso_por_rol]([rol_id],[permiso_id]) VALUES(2,3)
-INSERT INTO [dbo].[permiso_por_rol]([rol_id],[permiso_id]) VALUES(2,4)
-INSERT INTO [dbo].[permiso_por_rol]([rol_id],[permiso_id]) VALUES(3,5)
-INSERT INTO [dbo].[permiso_por_rol]([rol_id],[permiso_id]) VALUES(3,6)
-INSERT INTO [dbo].[permiso_por_rol]([rol_id],[permiso_id]) VALUES(4,7)
-INSERT INTO [dbo].[permiso_por_rol]([rol_id],[permiso_id]) VALUES(4,8)
+INSERT INTO [dbo].[permiso_por_rol]([id_rol],[id_permiso]) VALUES(1,1)
+INSERT INTO [dbo].[permiso_por_rol]([id_rol],[id_permiso]) VALUES(2,2)
+INSERT INTO [dbo].[permiso_por_rol]([id_rol],[id_permiso]) VALUES(2,3)
+INSERT INTO [dbo].[permiso_por_rol]([id_rol],[id_permiso]) VALUES(2,4)
+INSERT INTO [dbo].[permiso_por_rol]([id_rol],[id_permiso]) VALUES(3,5)
+INSERT INTO [dbo].[permiso_por_rol]([id_rol],[id_permiso]) VALUES(3,6)
+INSERT INTO [dbo].[permiso_por_rol]([id_rol],[id_permiso]) VALUES(4,7)
+INSERT INTO [dbo].[permiso_por_rol]([id_rol],[id_permiso]) VALUES(4,8)
 GO
 
 
@@ -99,8 +99,8 @@ USE [dbTecProg]
 GO
 
 INSERT INTO [dbo].[usuario]
-           ([persona_id]
-           ,[rol_id]
+           ([id_persona]
+           ,[id_rol]
            ,[password]
            ,[legajo])
      VALUES
@@ -114,6 +114,3 @@ INSERT INTO [dbo].[usuario]
 			((select persona.id from persona where persona.apellido like 'ravenna'),4, '123456', '0008')
 
 GO
-
-
-
