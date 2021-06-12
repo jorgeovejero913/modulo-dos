@@ -226,13 +226,16 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[orden_venta](
-	[id_orden_venta] [int] IDENTITY(1,1) NOT NULL,
 	[id_orden] [int] NOT NULL,
 	[id_metodo_pago] [int] NOT NULL,
 	[id_cliente] [int] NOT NULL,
- CONSTRAINT [PK_orden_venta] PRIMARY KEY CLUSTERED 
+PRIMARY KEY CLUSTERED 
 (
-	[id_orden_venta] ASC
+	[id_orden] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY],
+UNIQUE NONCLUSTERED 
+(
+	[id_orden] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
@@ -385,7 +388,7 @@ CREATE TABLE [dbo].[tarjeta](
 	[fecha_vencimiento] [varchar](50) NOT NULL,
 	[nombre_tarjeta] [varchar](50) NOT NULL,
 	[numero_tarjeta] [int] NOT NULL,
-	[id_metodo_pago] [int] NOT NULL,
+	[id_orden] int NULL
  CONSTRAINT [PK_tarjeta] PRIMARY KEY CLUSTERED 
 (
 	[id_tarjeta] ASC
@@ -398,19 +401,18 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[usuario](
-	[id] [int] IDENTITY(1,1) NOT NULL,
 	[id_persona] [int] NOT NULL,
 	[id_rol] [int] NOT NULL,
 	[password] [nvarchar](50) NOT NULL,
 	[legajo] [int] NOT NULL,
 	[deshabilitado] [datetime] NULL,
- CONSTRAINT [PK_usuario] PRIMARY KEY CLUSTERED 
+ PRIMARY KEY CLUSTERED 
 (
-	[id] ASC
+	[id_persona] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY],
- CONSTRAINT [IX_usuario] UNIQUE NONCLUSTERED 
+UNIQUE NONCLUSTERED 
 (
-	[legajo] ASC
+	[id_persona] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
@@ -450,16 +452,10 @@ CREATE NONCLUSTERED INDEX [IXFK_producto_categoria] ON [dbo].[producto]
 	[id_categoria] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
-/****** Object:  Index [IXFK_tarjeta_metodo_pago]    Script Date: 9/6/2021 22:40:47 ******/
-CREATE NONCLUSTERED INDEX [IXFK_tarjeta_metodo_pago] ON [dbo].[tarjeta]
-(
-	[id_metodo_pago] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-GO
 ALTER TABLE [dbo].[usuario] ADD  CONSTRAINT [DF_usuario_deshabilitado]  DEFAULT ((0)) FOR [deshabilitado]
 GO
 ALTER TABLE [dbo].[alerta]  WITH CHECK ADD FOREIGN KEY([id_persona])
-REFERENCES [dbo].[usuario] ([id])
+REFERENCES [dbo].[usuario] ([id_persona])
 GO
 ALTER TABLE [dbo].[alerta]  WITH CHECK ADD FOREIGN KEY([id_stock])
 REFERENCES [dbo].[stock] ([id_stock])
@@ -480,13 +476,13 @@ GO
 ALTER TABLE [dbo].[detalle_orden] CHECK CONSTRAINT [FK_id_producto]
 GO
 ALTER TABLE [dbo].[orden]  WITH CHECK ADD FOREIGN KEY([id_persona])
-REFERENCES [dbo].[usuario] ([id])
+REFERENCES [dbo].[usuario] ([id_persona])
 GO
 ALTER TABLE [dbo].[orden_compra]  WITH CHECK ADD FOREIGN KEY([id_orden])
 REFERENCES [dbo].[orden] ([id])
 GO
 ALTER TABLE [dbo].[orden_compra]  WITH CHECK ADD FOREIGN KEY([id_persona])
-REFERENCES [dbo].[usuario] ([id])
+REFERENCES [dbo].[usuario] ([id_persona])
 GO
 ALTER TABLE [dbo].[orden_compra]  WITH CHECK ADD FOREIGN KEY([id_proveedor])
 REFERENCES [dbo].[proveedor] ([id_proveedor])
@@ -501,10 +497,8 @@ REFERENCES [dbo].[metodo_pago] ([id_metodo_pago])
 GO
 ALTER TABLE [dbo].[orden_venta] CHECK CONSTRAINT [FK_orden_venta_metodo_pago]
 GO
-ALTER TABLE [dbo].[orden_venta]  WITH CHECK ADD  CONSTRAINT [FK_orden_venta_orden] FOREIGN KEY([id_orden])
+ALTER TABLE [dbo].[orden_venta]  WITH CHECK ADD FOREIGN KEY([id_orden])
 REFERENCES [dbo].[orden] ([id])
-GO
-ALTER TABLE [dbo].[orden_venta] CHECK CONSTRAINT [FK_orden_venta_orden]
 GO
 ALTER TABLE [dbo].[permiso_por_rol]  WITH CHECK ADD  CONSTRAINT [FK_permiso_por_rol_permiso] FOREIGN KEY([id_permiso])
 REFERENCES [dbo].[permiso] ([id])
@@ -525,22 +519,18 @@ ALTER TABLE [dbo].[proveedor]  WITH CHECK ADD FOREIGN KEY([id_direccion])
 REFERENCES [dbo].[direccion] ([id])
 GO
 ALTER TABLE [dbo].[sesion]  WITH CHECK ADD  CONSTRAINT [FK_sesion_usuario] FOREIGN KEY([id_usuario])
-REFERENCES [dbo].[usuario] ([id])
+REFERENCES [dbo].[usuario] ([id_persona])
 GO
 ALTER TABLE [dbo].[sesion] CHECK CONSTRAINT [FK_sesion_usuario]
+GO
+ALTER TABLE [tarjeta] ADD CONSTRAINT [FK_tarjeta_orden_venta]
+	FOREIGN KEY ([id_orden]) REFERENCES [orden_venta] ([id_orden]) ON DELETE No Action ON UPDATE No Action
 GO
 ALTER TABLE [dbo].[stock]  WITH CHECK ADD FOREIGN KEY([id_producto])
 REFERENCES [dbo].[producto] ([id_producto])
 GO
-ALTER TABLE [dbo].[tarjeta]  WITH CHECK ADD  CONSTRAINT [FK_tarjeta_metodo_pago] FOREIGN KEY([id_metodo_pago])
-REFERENCES [dbo].[metodo_pago] ([id_metodo_pago])
-GO
-ALTER TABLE [dbo].[tarjeta] CHECK CONSTRAINT [FK_tarjeta_metodo_pago]
-GO
-ALTER TABLE [dbo].[usuario]  WITH CHECK ADD  CONSTRAINT [FK_usuario_persona] FOREIGN KEY([id_persona])
+ALTER TABLE [dbo].[usuario]  WITH CHECK ADD FOREIGN KEY([id_persona])
 REFERENCES [dbo].[persona] ([id])
-GO
-ALTER TABLE [dbo].[usuario] CHECK CONSTRAINT [FK_usuario_persona]
 GO
 ALTER TABLE [dbo].[usuario]  WITH CHECK ADD  CONSTRAINT [FK_usuario_rol] FOREIGN KEY([id_rol])
 REFERENCES [dbo].[rol] ([id])
