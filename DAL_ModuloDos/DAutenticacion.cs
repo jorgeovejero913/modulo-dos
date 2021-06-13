@@ -17,10 +17,10 @@ namespace DAL_ModuloDos
         /// <returns>Un objeto del tipo 'Sesion'</returns>
         public Sesion Login(int legajo, string password)
         {
-            string query = string.Format("Select id, persona_id, rol_id, legajo, deshabilitado from usuario where legajo={0} and password='{1}'", legajo, password);
+            string query = string.Format("Select id_persona, id_rol, legajo, deshabilitado from usuario where legajo={0} and password='{1}'", legajo, password);
             DataTable usuarioDB = _db.LeerPorComando(query);
 
-                if (usuarioDB.Rows.Count > 0 && !DBNull.Value.Equals(usuarioDB.Rows[0].ItemArray[4]))
+                if (usuarioDB.Rows.Count > 0 && !DBNull.Value.Equals(usuarioDB.Rows[0].ItemArray[3]))
                 {
                     
                 Sesion sesion = new Sesion();
@@ -28,7 +28,7 @@ namespace DAL_ModuloDos
                 sesion.Inicio = DateTime.Now;
                 string sqlFormattedDate = sesion.Inicio.ToString("yyyy-MM-dd HH:mm:ss.fff");
 
-                string insertSesion = string.Format("Insert into sesion(usuario_id, fecha_inicio) values({0}, '{1}')", sesion.Usuario.ID, sqlFormattedDate);
+                string insertSesion = string.Format("Insert into sesion(id_usuario, fecha_inicio) values({0}, '{1}')", sesion.Usuario.ID, sqlFormattedDate);
 
                 if(1 != _db.EscribirPorComando(insertSesion))
                 {
@@ -36,7 +36,7 @@ namespace DAL_ModuloDos
                 }
                 else
                 {
-                    string querySesion = string.Format("Select top 1 id from sesion where usuario_id={0} order by id desc", sesion.Usuario.ID);
+                    string querySesion = string.Format("Select top 1 id from sesion where id_usuario={0} order by id desc", sesion.Usuario.ID);
                     DataTable sesionDB = _db.LeerPorComando(querySesion);
 
                     sesion.ID = int.Parse(sesionDB.Rows[0].ItemArray[0].ToString());
@@ -71,7 +71,7 @@ namespace DAL_ModuloDos
         /// </summary>
         public bool SesionValida()
         {
-            string querySesion = string.Format("Select top 1 id, usuario_id, fecha_inicio from sesion where id = {0} and fecha_fin is null", ManejadorDeSesion.Sesion.ID);
+            string querySesion = string.Format("Select top 1 id, id_usuario, fecha_inicio from sesion where id = {0} and fecha_fin is null", ManejadorDeSesion.Sesion.ID);
             DataTable sesionDB = _db.LeerPorComando(querySesion);
 
             if(sesionDB.Rows.Count == 0)

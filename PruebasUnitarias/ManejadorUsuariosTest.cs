@@ -30,9 +30,9 @@ namespace PruebasUnitarias
             {
                 Nombre="Florencia Noemi",
                 Apellido="Morrone 30/05",
-                Legajo=12451,
+                Legajo=12422,
                 Rol=roles[0],
-                DNI=4223334,
+                DNI=4223356,
                 Direccion=direccion
             };
 

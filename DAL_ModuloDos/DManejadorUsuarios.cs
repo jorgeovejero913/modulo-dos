@@ -12,17 +12,18 @@ namespace DAL_ModuloDos
 
         /// <summary>
         /// Devuelve un objeto del tipo Usuario al recibir el resultado de una consulta a la base de datos
-        /// usuarioColumnas[0]=id
-        /// usuarioColumnas[1]=persona_id
-        /// usuarioColumnas[2]=rol_id
-        /// usuarioColumnas[3]=legajo
+
+        /// usuarioColumnas[0]=id_persona
+        /// usuarioColumnas[1]=id_rol
+        /// usuarioColumnas[2]=legajo
+        /// usuarioColumnas[3]=deshabilitado
         /// </summary>
         /// <param name="usuarioColumnas">Columnas de la consulta a la tabla usuario</param>
         /// <returns>Un objeto del tipo 'Usuario'</returns>
         public Usuario obtenerUsuarioObj(object[] usuarioColumnas)
         {
             //Rol
-            string queryRol = string.Format("Select id, descripcion from rol where id={0}", usuarioColumnas[2]);
+            string queryRol = string.Format("Select id, descripcion from rol where id={0}", usuarioColumnas[1]);
             DataTable rolDB = _db.LeerPorComando(queryRol);
             /*
              * rolDB - ItemArray[0]=id
@@ -38,7 +39,7 @@ namespace DAL_ModuloDos
 
             // Permisos
             string queryPermisos = string.Format("Select permiso.id, permiso.descripcion from permiso, rol, permiso_por_rol " +
-                "where rol.id=permiso_por_rol.rol_id and permiso.id=permiso_por_rol.permiso_id and rol.id={0}", rolDB.Rows[0].ItemArray[0]);
+                "where rol.id=permiso_por_rol.id_rol and permiso.id=permiso_por_rol.id_permiso and rol.id={0}", rolDB.Rows[0].ItemArray[0]);
             DataTable permisosDB = _db.LeerPorComando(queryPermisos);
             /*
              * permisosDB - ItemArray[0]=id
@@ -60,14 +61,14 @@ namespace DAL_ModuloDos
 
 
             //Persona
-            string queryPersona = string.Format("Select id, nombre, apellido, dni, direccion_id from persona where id={0}", usuarioColumnas[1]);
+            string queryPersona = string.Format("Select id, nombre, apellido, dni, id_direccion from persona where id={0}", usuarioColumnas[0]);
             DataTable personaDB = _db.LeerPorComando(queryPersona);
             /*
              * personaDB - ItemArray[0]=id
              * personaDB - ItemArray[1]=nombre
              * personaDB - ItemArray[2]=apellido
              * personaDB - ItemArray[3]=dni
-             * personaDB - ItemArray[4]=direccion_id
+             * personaDB - ItemArray[4]=id_direccion
              * **/
 
             Usuario usuario = new Usuario()
@@ -76,17 +77,17 @@ namespace DAL_ModuloDos
                 Nombre = personaDB.Rows[0].ItemArray[1].ToString(),
                 Apellido = personaDB.Rows[0].ItemArray[2].ToString(),
                 DNI = int.Parse(personaDB.Rows[0].ItemArray[3].ToString()),
-                Legajo = int.Parse(usuarioColumnas[3].ToString()),
+                Legajo = int.Parse(usuarioColumnas[2].ToString()),
                 Rol = rolAuxiliar
             };
 
-            if (DBNull.Value.Equals(usuarioColumnas[4]))
+            if (DBNull.Value.Equals(usuarioColumnas[3]))
             {
                 usuario.Deshabilitado = null;
             }
             else
             {
-                usuario.Deshabilitado = Convert.ToDateTime(usuarioColumnas[4].ToString());
+                usuario.Deshabilitado = Convert.ToDateTime(usuarioColumnas[3].ToString());
             }
 
             //DIRECCION
@@ -125,7 +126,7 @@ namespace DAL_ModuloDos
             DataTable listaUsuariosDB = new DataTable();
             List<Usuario> usuarios = new List<Usuario>();
 
-            string queryLista = string.Format("SELECT id, persona_id, rol_id, legajo, deshabilitado FROM usuario");
+            string queryLista = string.Format("SELECT id_persona, id_rol, legajo, deshabilitado FROM usuario");
             listaUsuariosDB = _db.LeerPorComando(queryLista);
 
             foreach (DataRow item in listaUsuariosDB.Rows)
@@ -177,7 +178,7 @@ namespace DAL_ModuloDos
                 int idDireccion = obtenerUltimoId("direccion");
                 
                 //INSERT PERSONA
-                string queryPersona = string.Format("INSERT INTO persona (apellido, nombre, dni, direccion_id) VALUES ('{0}','{1}',{2},{3})", usuario.Apellido, usuario.Nombre, usuario.DNI, idDireccion);
+                string queryPersona = string.Format("INSERT INTO persona (apellido, nombre, dni, id_direccion) VALUES ('{0}','{1}',{2},{3})", usuario.Apellido, usuario.Nombre, usuario.DNI, idDireccion);
                 
                 if (1 != _db.EscribirPorComando(queryPersona))
                 {
@@ -188,7 +189,7 @@ namespace DAL_ModuloDos
                     int idPersona = obtenerUltimoId("persona");
                     
                     //INSERT USUARIO
-                    string queryUsuario = string.Format("INSERT INTO usuario (persona_id, rol_id, password, legajo) VALUES ({0},{1},'{2}',{3})", 
+                    string queryUsuario = string.Format("INSERT INTO usuario (id_persona, id_rol, password, legajo) VALUES ({0},{1},'{2}',{3})", 
                         idPersona, 
                         usuario.Rol.ID,
                         password,
@@ -200,8 +201,7 @@ namespace DAL_ModuloDos
                     }
                     else
                     {
-                        int idUsuario = obtenerUltimoId("usuario");
-                        usuario.ID = idUsuario;
+                        usuario.ID = idPersona;
                         return usuario;
                     }
                 }
@@ -233,7 +233,7 @@ namespace DAL_ModuloDos
             }
             else
             {
-                string queryPersona = string.Format("Select persona_id from usuario where id={0}", usuario.ID);
+                string queryPersona = string.Format("Select id_persona from usuario where id_persona={0}", usuario.ID);
                 DataTable personaDB = _db.LeerPorComando(queryPersona);
                 //UPDATE PERSONA
                 queryPersona = string.Format("UPDATE persona SET apellido='{0}', nombre='{1}', dni={2} WHERE id={3}", 
@@ -252,14 +252,14 @@ namespace DAL_ModuloDos
                     //UPDATE USUARIO
                     if (password.Equals(""))
                     {
-                        queryUsuario = string.Format("UPDATE usuario SET rol_id={0}, legajo={1} where id={2}",
+                        queryUsuario = string.Format("UPDATE usuario SET id_rol={0}, legajo={1} where id_persona={2}",
                         usuario.Rol.ID,
                         usuario.Legajo,
                         usuario.ID);
                     }
                     else
                     {
-                        queryUsuario = string.Format("UPDATE usuario SET rol_id={0}, legajo={1}, password='{2}' where id={3}",
+                        queryUsuario = string.Format("UPDATE usuario SET id_rol={0}, legajo={1}, password='{2}' where id_persona={3}",
                         usuario.Rol.ID,
                         password,
                         usuario.Legajo,
@@ -291,7 +291,7 @@ namespace DAL_ModuloDos
             DateTime deshabilitado = DateTime.Now;
             usuario.Deshabilitado = deshabilitado;
             string sqlFormattedDate = deshabilitado.ToString("yyyy-MM-dd HH:mm:ss.fff");
-            string queryUsuario = string.Format("UPDATE usuario SET deshabilitado = '{0}' where id={1}", sqlFormattedDate, usuario.ID);
+            string queryUsuario = string.Format("UPDATE usuario SET deshabilitado = '{0}' where id_persona={1}", sqlFormattedDate, usuario.ID);
 
             if (1 != _db.EscribirPorComando(queryUsuario))
                 return null;
@@ -307,7 +307,7 @@ namespace DAL_ModuloDos
         public Usuario activarUsuario(Usuario usuario)
         {
             usuario.Deshabilitado = null;
-            string queryUsuario = string.Format("UPDATE usuario SET deshabilitado = NULL where id={0}", usuario.ID);
+            string queryUsuario = string.Format("UPDATE usuario SET deshabilitado = NULL where id_persona={0}", usuario.ID);
 
             if (1 != _db.EscribirPorComando(queryUsuario))
                 return null;
