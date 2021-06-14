@@ -1,6 +1,6 @@
 /****** Script de creaccion DB ******/
 /*
-	v1.1: Creacion de tablas  modulos 2, 3, 4
+	v1.2: Creacion de tablas  modulos 2, 3, 4
 	NOTA: Se deben modificar las rutas donde se guradaran los archivos, en el caso de que sea necesario.
 */
 /****** START ******/
@@ -92,7 +92,7 @@ CREATE TABLE [dbo].[alerta](
 	[id_alerta] [int] IDENTITY(1,1) NOT NULL,
 	[id_stock] [int] NOT NULL,
 	[id_persona] [int] NOT NULL,
-	[cantidadminina] [int] NOT NULL,
+	[cantidad_minima] [int] NOT NULL,
 PRIMARY KEY CLUSTERED 
 (
 	[id_alerta] ASC
@@ -143,7 +143,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[detalle_orden](
 	[id_detalle_orden] [int] IDENTITY(1,1) NOT NULL,
-	[cantidad] [varchar](50) NOT NULL,
+	[cantidad] [int] NOT NULL,
 	[id_orden] [int] NOT NULL,
 	[id_producto] [int] NOT NULL,
  CONSTRAINT [PK_id_detalle_orden] PRIMARY KEY CLUSTERED 
@@ -537,7 +537,7 @@ REFERENCES [dbo].[rol] ([id])
 GO
 ALTER TABLE [dbo].[usuario] CHECK CONSTRAINT [FK_usuario_rol]
 GO
-ALTER TABLE [dbo].[alerta]  WITH CHECK ADD CHECK  (([cantidadminina]>=(0)))
+ALTER TABLE [dbo].[alerta]  WITH CHECK ADD CHECK  (([cantidad_minima]>=(0)))
 GO
 ALTER TABLE [dbo].[stock]  WITH CHECK ADD CHECK  (([cantidad]>=(0)))
 GO
