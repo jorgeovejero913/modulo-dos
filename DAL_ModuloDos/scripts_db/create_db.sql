@@ -193,7 +193,6 @@ CREATE TABLE [dbo].[orden](
 	[id] [int] IDENTITY(1,1) NOT NULL,
 	[fecha] [datetime] NOT NULL,
 	[id_persona] [int] NOT NULL,
-	[habilitado] [datetime] NULL,
 PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -296,7 +295,6 @@ GO
 CREATE TABLE [dbo].[producto](
 	[id_producto] [int] IDENTITY(1,1) NOT NULL,
 	[nombre] [varchar](50) NOT NULL,
-	[stock] [int] NOT NULL,
 	[precio_compra] [float] NOT NULL,
 	[precio_venta] [float] NOT NULL,
 	[id_categoria] [int] NOT NULL,
@@ -388,7 +386,7 @@ CREATE TABLE [dbo].[tarjeta](
 	[fecha_vencimiento] [varchar](50) NOT NULL,
 	[nombre_tarjeta] [varchar](50) NOT NULL,
 	[numero_tarjeta] [int] NOT NULL,
-	[id_orden] int NULL
+	[id_orden] int NOT NULL
  CONSTRAINT [PK_tarjeta] PRIMARY KEY CLUSTERED 
 (
 	[id_tarjeta] ASC
