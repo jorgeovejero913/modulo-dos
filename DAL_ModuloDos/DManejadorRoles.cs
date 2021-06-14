@@ -28,7 +28,7 @@ namespace DAL_ModuloDos
                 roles.Add(new Rol()
                 {
                     ID = int.Parse(item.ItemArray[0].ToString()),
-                    Descripcion = item.ItemArray[0].ToString()
+                    Descripcion = item.ItemArray[1].ToString()
                 });
             }
 
