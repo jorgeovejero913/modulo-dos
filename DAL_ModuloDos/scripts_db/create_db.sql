@@ -385,7 +385,7 @@ CREATE TABLE [dbo].[tarjeta](
 	[cvc] [varchar](50) NOT NULL,
 	[fecha_vencimiento] [varchar](50) NOT NULL,
 	[nombre_tarjeta] [varchar](50) NOT NULL,
-	[numero_tarjeta] [int] NOT NULL,
+	[numero_tarjeta] [varchar](50) NOT NULL,
 	[id_orden] int NOT NULL
  CONSTRAINT [PK_tarjeta] PRIMARY KEY CLUSTERED 
 (
